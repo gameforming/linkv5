@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LinkV5</title>
+
+<style>
+body{
+background:#111;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+input{
+display:block;
+margin:10px 0;
+padding:10px;
+width:250px;
+}
+
+button{
+padding:10px;
+margin-right:10px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>LinkV5</h1>
+
+<input id="username" placeholder="gebruikersnaam">
+<input id="password" type="password" placeholder="wachtwoord">
+
+<button onclick="register()">
+Registreren
+</button>
+
+<button onclick="login()">
+Inloggen
+</button>
+
+<div id="status"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+const statusDiv =
+document.getElementById("status");
+
+function register(){
+
+  socket.emit("register",{
+    username:
+      document.getElementById("username").value,
+    password:
+      document.getElementById("password").value
+  });
+
+}
+
+function login(){
+
+  socket.emit("login",{
+    username:
+      document.getElementById("username").value,
+    password:
+      document.getElementById("password").value
+  });
+
+}
+
+socket.on("register_result",(data)=>{
+
+  statusDiv.innerText =
+    data.message;
+
+});
+
+socket.on("login_result",(data)=>{
+
+  if(data.success){
+
+    localStorage.setItem(
+      "currentUser",
+      data.username
+    );
+
+    statusDiv.innerText =
+      "Ingelogd als " + data.username;
+
+  }else{
+
+    statusDiv.innerText =
+      data.message;
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
